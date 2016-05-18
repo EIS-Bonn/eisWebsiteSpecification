@@ -1,0 +1,24 @@
+		.project{
+			border: 1px solid black;
+			margin-bottom: 10px;
+			padding:5px;
+			display:block;
+		}
+		.label{
+			font-style:italic;
+			clear:both;
+		}
+		.description{
+		}
+		.level{
+			color:red;
+		}
+		.requirements{
+			color:red;
+		}
+		.exhibit-collectionSummaryWidget-results{
+			display:none;
+		}
+		.exhibit-collectionView-header{
+			display:none;
+		}

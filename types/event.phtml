@@ -1,0 +1,168 @@
+<?php
+/**
+ * This file is part of the {@link http://ontowiki.net OntoWiki} 
+project.
+ *
+ * @copyright Copyright (c) 2011, {@link http://eis.iai.uni-bonn.de eis}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General 
+Public License (GPL)
+ */
+
+/**
+ * events template
+ *
+ * arranges the content for the schema:Event class
+ */
+
+/*
+ * prepare date string
+ * <time content="%propertyValue%" property="schema:startDate">for 
+humans</time>
+ */
+$startDate = $this->literal(array(
+    'plain' => true,
+    'property' => 'schema:startDate'
+));
+$humanStartDate = $this->date($startDate, 'd.m.Y');
+if ($startDate != '') {
+    $startDate = "<time property='schema:startDate' datatype='xsd:date' 
+content='$startDate'>$humanStartDate</time>";
+}
+$endDate = $this->literal(array(
+    'plain' => true,
+    'property' => 'schema:endDate'
+));
+$humanEndDate = $this->date($endDate, 'd.m.Y');
+if ($endDate != '') {
+    $endDate = "<time property='schema:endDate' datatype='xsd:date' 
+content='$endDate'>$humanEndDate</time>";
+}
+$date = $startDate;
+if ($endDate != '') {
+    $date .= ' &mdash; ' . $endDate;
+}
+$date = "<h2 class='hookline'>$date</h2>";
+
+$address = $this->query(array(
+    'where'    => '<'.$this->resourceUri.'> schema:location ?resourceUri 
+.',
+    'template' => 'schema-address'
+));
+
+// prepare hookline and abstract (both optional)
+$hookline = $this->literal(array(
+    'property' => 'eis:hookline',
+    'class' => 'hookline',
+    'prefix' => '<span class="hideme">:</span> '
+));
+$abstract = $this->literal(array(
+    'property' => 'schema:description',
+    'tag' => 'p',
+    'class' => 'abstract'
+));
+
+// prepare button row
+$queryForButtons = '
+PREFIX eis: <http://eis.iai.uni-bonn.de/schema/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+SELECT DISTINCT ?resourceUri ?label
+WHERE {
+    { <'.$this->resourceUri.'> ?propertyUri ?resourceUri .
+      ?propertyUri eis:buttonLabel ?label }
+        UNION
+    { ?resourceUri ?propertyUri <'.$this->resourceUri.'> .
+      ?propertyUri eis:buttonLabel ?label }
+        UNION
+    { ?resourceUri foaf:primaryTopic <'.$this->resourceUri.'> .
+      ?resourceUri eis:buttonLabel ?label }
+        UNION
+    { <'.$this->resourceUri.'> foaf:isPrimaryTopicOf ?resourceUri .
+      ?resourceUri eis:buttonLabel ?label }
+        UNION
+    { ?resourceUri <http://schema.org/isRelatedTo> 
+<'.$this->resourceUri.'> .
+      ?resourceUri eis:buttonLabel ?label }
+}';
+$buttons = $this->querylist($queryForButtons, 
+'local/items/buttons.phtml');
+
+// prepare projects for sidelinks
+$promotedProjects = $this->query(array(
+    'where'    => '?resourceUri eis:promoted "true"^^xsd:boolean .',
+    'template' => 'liplain',
+    'prefix'   => '<li><strong class="headline">promoted 
+projects</strong>',
+    'suffix'   => '</li>'
+));
+$relatedProjects = $this->query(array(
+    'where'    => '{ ?resourceUri eis:relatedProject 
+<'.$this->resourceUri.'> .} UNION' .
+        '{ <'.$this->resourceUri.'> eis:relatedProject ?resourceUri . 
+}',
+    'template' => 'liplain',
+    'prefix'   => '<li><strong class="headline">related 
+projects</strong>',
+    'suffix'   => '</li>'
+));
+
+// prepare screenshots
+$screenshots = $this->query(array(
+    'where'    => '{<'.$this->resourceUri.'> schema:image ?resourceUri 
+}',
+    'template' => 'depictions'
+));
+
+// prepare main content (uses default content properties)
+$content = $this->literal(array('tag' => 'div', 'class' => 'content'));
+
+// prepare team list
+$team = $this->query(array(
+    'where' => '{?resourceUri foaf:currentProject 
+<'.$this->resourceUri.'> .} UNION '.
+        '{<'.$this->resourceUri.'> doap:maintainer ?resourceUri . }'.
+        ' OPTIONAL { ?resourceUri <http://xmlns.com/foaf/0.1/familyName> 
+?familyName }',
+    'orderby' => 'ASC(?familyName)',
+    'template' => 'liplain',
+    'activeSuffix' => ' (Principle Contact / Maintainer)',
+    'active' => $this->literal(array('property' => 'doap:maintainer', 
+'plain' => 'true')),
+    'prefix' => '<div class="c50l"><div class="subcl"><h1>Current 
+Team</h1>',
+    'suffix' => '</div></div>'
+));
+
+// prepare partner list
+$partner = $this->query(array(
+    'where' => '{<'.$this->resourceUri.'> eis:partner ?resourceUri.}',
+    'template' => 'liplain',
+    'prefix' => '<div class="c50r"><div class="subcl"><h1>Partner</h1>' 
+. PHP_EOL,
+    'suffix' => '</div></div>'
+));
+
+// create side navigation
+$navOptions = array(
+    'navProperty' => 'http://eis.iai.uni-bonn.de/schema/sideNavigation',
+    'navClass' => 'nav-sidelinks',
+    'suffix'    => '<!-- /#nav-sidelinks -->',
+    'activeUrl' => $this->resourceUri
+);
+
+?>
+
+<?php echo $this->navigationList($navOptions); ?>
+<header class="intro">
+    <h1>
+        <span property="schema:name"><?php echo $this->title ?></span>
+        <?php echo $hookline ?>
+    </h1>
+    <?php echo $date, $screenshots, $abstract, $address, $buttons ?>
+</header> <!-- /.intro -->
+<?php echo $content ?>
+<div class="subcolumns">
+<?php echo $team, $partner ?>
+</div>
+<?php echo $this->renderx(array(
+    'template' => 'local/items/publications.phtml'
+));

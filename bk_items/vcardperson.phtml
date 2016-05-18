@@ -1,0 +1,157 @@
+<div class="vcard" itemscope itemtype="http://schema.org/Person">
+<meta itemprop="url" content="<?php echo $this->resourceUri; ?>" />
+<?php
+    $mmodel = new Erfurt_Rdf_MemoryModel(array($this->resourceUri => $this->description));
+
+    // get URI of VCard
+    if ($mmodel->hasSP($this->resourceUri, 'http://schema.org/location')) {
+        $directVcardUri = $mmodel->getValue($this->resourceUri, 'http://schema.org/location');
+    }
+
+    $defaultVcardUri = $this->templateOptions()->getValue('people-default-location');
+
+    $env = array(
+        'mmodel' => $mmodel,
+        'resourceUri' => $this->resourceUri,
+        'this' => $this
+    );
+
+    if (isset($defaultVcardUri)) {
+        $env['defaultVcardUri'] = $defaultVcardUri;
+    }
+
+    if (isset($directVcardUri)) {
+        $env['directVcardUri'] = $directVcardUri;
+    }
+
+    function getFromVCard ($property, $env) {
+        $mmodel = $env['mmodel'];
+        $value = '';
+        if ($mmodel->hasSP($env['resourceUri'], $property)) {
+            // the value can be returned, because is has been checked with hasSP()
+            return $mmodel->getValue($env['resourceUri'], $property);
+        }
+        if (empty($value) && isset($env['directVcardUri'])) {
+            $value = $env['this']->literal(
+                array('uri' => $env['directVcardUri'], 'property' => $property, 'plain' => true)
+            );
+        }
+        if (empty($value) && isset($env['defaultVcardUri'])) {
+            $value = $env['this']->literal(
+                array('uri' => $env['defaultVcardUri'], 'property' => $property, 'plain' => true)
+            );
+        }
+        return $value;
+    }
+
+    $contacts = array(
+        'Address'   => array(), // Work and Home
+        'Email'     => array(), // Office
+        'Phone'     => array(), // Work and Mobile
+        'Fax'       => array(), // Work
+        'Link'      => array(), // Workpage and Weblog
+        'Resource'  => array(), // WebID
+    );
+
+    // Work Address
+    if (isset($directVcardUri)) {
+        $workaddress = $this->renderx(
+            array(
+                'template' => 'local/items/schema-address.phtml',
+                'resourceUri' => $directVcardUri,
+                'superResourceUri' => $this->resourceUri
+            )
+        );
+    }
+    if (empty($workaddress) && isset($defaultVcardUri)) {
+        $workaddress = $this->renderx(
+            array(
+                'template' => 'local/items/schema-address.phtml',
+                'resourceUri' => $defaultVcardUri,
+                'superResourceUri' => $this->resourceUri
+            )
+        );
+    }
+    if (!empty($workaddress)) {
+        $contacts['Address'][] = array(
+            'type'      => 'Work',
+            'label'     => $workaddress,
+            'itemprop'  => 'address'
+        );
+    }
+
+    // Email Office
+    $mboxUri   = getFromVCard('http://xmlns.com/foaf/0.1/mbox', $env);
+    if (!empty($mboxUri)) {
+        $mboxLabel = str_replace ('mailto:', '', $mboxUri );
+        $contacts['Email'][] = array(
+            'type'      => 'Office',
+            'label'     => $mboxLabel,
+            'url'       => $mboxUri,
+            'itemprop'  => 'email'
+        );
+    }
+
+    // Phone Work
+    $phoneUri   = getFromVCard('http://xmlns.com/foaf/0.1/phone', $env);
+    if (!empty($phoneUri)) {
+        $phoneLabel = str_replace ('tel:', '', $phoneUri);
+        $contacts['Phone'][] = array(
+            'type'      => 'Work',
+            'label'     => $phoneLabel,
+            'url'       => $phoneUri,
+            'itemprop'  => 'telephone'
+        );
+    }
+
+    // Fax Work
+    $faxUri   = getFromVCard('http://schema.org/faxNumber', $env);
+    if (!empty($faxUri)) {
+        $faxLabel = str_replace ('tel:', '', $faxUri);
+        $contacts['Fax'][] = array(
+            'type'      => 'Work',
+            'label'     => $faxLabel,
+            'url'       => $faxUri,
+            'itemprop'  => 'faxNumber'
+        );
+    }
+
+    $name = $this->title;
+    $depiction = $this->img(array(
+        'class'     => 'depiction',
+        'alt'       => 'Depiction of ' . $name,
+        'prefix'    => '<div class="widget_depictions"><div class="widget_depictions_big">',
+        'suffix'    => '</div></div>',
+        'attributes'=> array('itemprop' => 'image')
+    ));
+
+    echo '<dfn itemprop="name">'.$name.'</dfn>' . PHP_EOL;
+    echo $depiction . PHP_EOL;
+
+    echo '<dl>' . PHP_EOL;
+    foreach ($contacts as $mediatype => $list_of_contacts)
+    {
+        $lmediatype = strtolower($mediatype);
+        $imgSrc     = $this->baseUri.'/images/icon-type-'.$lmediatype.'.png';
+
+        foreach ($list_of_contacts as $contact)
+        {
+            $imgAlt   = htmlentities($mediatype .' ' . $contact['type'], ENT_QUOTES);
+            $imgTitle = $imgAlt;
+
+            echo '<dt><span class="icon icon-'.$lmediatype.'">'.$imgTitle.'</span></dt>' . PHP_EOL;
+
+            echo '<dd ';
+            echo 'class="'.$lmediatype.'"';
+            echo (isset($contact['itemprop']))?' itemprop="'.$contact['itemprop'].'"':'';
+            echo '>';
+            echo (isset($contact['url']))?'<a href="'.$contact['url'].'">':'';
+            echo $contact['label'];
+            echo (isset($contact['url']))?'</a>':'';
+            echo '</dd>' . PHP_EOL;
+        }
+    }
+    echo '</dl>' . PHP_EOL;
+
+?>
+</div>

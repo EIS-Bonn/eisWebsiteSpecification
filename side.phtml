@@ -1,0 +1,106 @@
+<?php
+/**
+ * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ *
+ * @copyright Copyright (c) 2011, {@link http://aksw.org AKSW}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ */
+
+/**
+ * aksw.org feed template
+ *
+ * arranges the news feed for the resource
+ */
+
+
+// prepare module options
+//deleted for EIS
+/*
+$moduleOptions = array(
+    'noChrome' => true,
+    'template' => 'local/items/feedentry',
+    'fallbackFeed' => 'http://eis.iai.uni-bonn.de/blog/?feed=rss2');
+$moduleConfig = new Zend_Config($moduleOptions);
+$content = trim($this->module('feeds', $moduleConfig));
+*/?>
+<style>
+table td{
+   background: #fff;
+   margin-right: 0px;
+} 
+td > a {
+  margin: 0px;
+}
+tr, td {
+margin: 0px;
+padding:0px;
+}
+</style>
+    <aside id="associations">
+    <h2>Hosted by</h2>
+      <div>
+         <a href="http://www3.uni-bonn.de/" ><img src="<?php echo $this->baseUri; ?>/images/logo-unibonn.png" alt="Rheinisch Friedrich-Wilhelms Universität Bonn" width="75%" /></a><span>,</span>
+         <a href="http://www.iais.fraunhofer.de/"><img src="<?php echo $this->baseUri; ?>/images/logo-iais.gif" alt="Fraunhofer IAIS"  style="margin-left:8px" width="75%"/></a>
+      </div>
+    <h2>Affiliations</h2>
+       	<a href="http://www.bdva.eu"><img src="<?php echo $this->baseUri; ?>/images/bdv_logo_fullmember_large.png" alt="Big Data Value Association (BDVA)" width="60%" style="margin-left:8px" /></a>
+     <h2>Funded by</h2>
+      <div class="small">
+       <table>
+      <tr>
+        <td>  <a href="http://cordis.europa.eu/fp7/home_en.html"><img src="<?php echo $this->baseUri; ?>/images/logo-fp7.png" alt="EU Seventh Framework Programme (FP7)"/></a></td>
+        <td>  <a href="http://ec.europa.eu/programmes/horizon2020/"><img src="<?php echo $this->baseUri; ?>/images/logo-eu-h2020.jpg"  alt="Horizon 2020"/></a>H2020</a> </td>
+       </tr>
+      <tr><td>	  <a href="http://www.bmbf.de/en/"><img src="<?php echo $this->baseUri; ?>/images/logo-bmbf.png" alt="Federal Ministry for Research and Education" /></a> </td>
+          <td>  <a href="http://www.bmwi.de"><img src="<?php echo $this->baseUri; ?>/images/logo-BMWi.png" alt="German ministry of economics" /></a></td>
+     </tr>
+    <tr><td>   <a href="http://www.daad.de/en/"><img src="<?php echo $this->baseUri; ?>/images/logo-daad.png" alt="German Academic Exchange Service" width="150px"/></a> </td>	 
+   	<td>  <a href="http://www.dfh-ufa.org"><img src="<?php echo $this->baseUri; ?>/images/logo-fr-de.jpg" alt="Franco-German University" style="width:150px"/></a></td>
+     </tr>
+      <tr><td colspan="2"> <a href="http://www.dfg.de"><img src="<?php echo $this->baseUri; ?>/images/logo-dfg.jpg" alt="German research foundation"/></a>   
+          </td>
+     </tr>         
+    </table>
+    </div>
+      
+
+<a class="twitter-timeline" href="https://twitter.com/KemeleM/lists/eis-bonn" data-widget-id="559742481584373764"></a>
+<script>!function(d,s,id){var 
+js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+
+<?php 
+/*$rss = new DOMDocument();
+$rss->load('http://eis.iai.uni-bonn.de/blog/feed/');
+$feed = array();
+foreach ($rss->getElementsByTagName('item') as $node) {
+        $item = array (
+                'title' => $node->getElementsByTagName('title')->item(0)->nodeValue,
+                'desc' => $node->getElementsByTagName('description')->item(0)->nodeValue,
+                'link' => $node->getElementsByTagName('link')->item(0)->nodeValue,
+                'date' => $node->getElementsByTagName('pubDate')->item(0)->nodeValue,
+                );
+        array_push($feed, $item);
+}
+
+
+if (count($feed)): ?> 
+    <h2> News from EIS blog </h2><!-- /#associations -->
+<?php endif;
+
+$limit = 5;
+for($x=0; $x<$limit; $x++) {
+        if (isset($feed[$x])):
+	    $title = str_replace(' & ', ' &amp; ', $feed[$x]['title']);
+	    $link = $feed[$x]['link'];
+	    $description = $feed[$x]['desc'];
+	    $date = date('l F d, Y', strtotime($feed[$x]['date']));            
+	    echo '<p><strong><a href="'.$link.'" title="'.$title.'">'.$title.'</a></strong><br />';
+	    echo '<small><em>Posted on '.$date.'</em></small></p>';
+	    echo '<p>'.$description.'</p>';
+        endif;
+}*/
+
+?>
+
+</aside>

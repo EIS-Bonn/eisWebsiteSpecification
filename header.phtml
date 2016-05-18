@@ -1,0 +1,44 @@
+<?php
+/**
+ * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ *
+ * @copyright Copyright (c) 2013, {@link http://aksw.org AKSW}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ */
+
+/**
+ * aksw.org header template
+ */
+?>
+<header id="header">
+    <h1><a href="/"><img style="padding-bottom:5px" src="<?php echo $this->baseUri; ?>/images/logo-eis.png" alt="Enterprise Information System (EIS) Department" /></a></h1>
+<?php
+$navOptions = array(
+    'navResource' => 'http://eis.iai.uni-bonn.de/Navigation/Main',
+    'navId' => 'nav-main',
+    'suffix'    => '<!-- /#nav-main -->',
+    'activeUrl' => $this->resourceUri
+);
+echo $this->navigationList($navOptions);
+?>
+<?php
+$navOptions = array(
+    'navResource' => 'http://eis.iai.uni-bonn.de/Navigation/Top',
+    'navId' => 'nav-top',
+    'suffix'    => '<!-- /#nav-top -->',
+    'activeUrl' => $this->resourceUri
+);
+echo $this->navigationList($navOptions);
+?>
+    <nav>
+        <form id="search" action="#" method="get" role="search">
+            <fieldset>
+                <legend>Search</legend>
+                <input type="text" id="searchterm" value="" />
+                <button type="submit">Search</button>
+            </fieldset>
+        </form>
+    </nav>
+</header> <!-- /#header -->
+<hr class="hideme" />
+

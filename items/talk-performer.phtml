@@ -1,0 +1,71 @@
+<?php
+/**
+ * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ *
+ * @copyright Copyright (c) 2013, {@link http://eis.iai.uni-bonn.de eis}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ */
+
+/**
+ * querylist talk performer element template (site independent)
+ *
+ */
+
+// prepare vars from the querylist helper
+$resourceUri   = $this->resourceUri;
+$resource      = new OntoWiki_Resource(
+    $this->resourceUri, OntoWiki::getInstance()->selectedModel
+);
+$resourceModel = $resource->getMemoryModel();
+$title         = $this->title;
+$oddclass      = $this->oddclass;
+
+if ( ($this->listhint == 'first') || ($this->rowcount == 1) ) {
+    echo "<div class='query-list-talk-performer'>" . PHP_EOL;
+}
+
+// if we have a literal item, do not do anything but a html comment
+if (!Erfurt_Uri::check($resourceUri)) {
+    echo "<!-- $title is not a resource -->";
+} else {
+    // prepare the logo link
+    $logo          = $this->img(array(
+        'property' => 'schema:image',
+        'class'    => 'logo',
+        'alt'      => 'depiction',
+        'prefix'   => '<div class="logo">',
+        'suffix'   => '</div>'
+    ));
+
+    $affiliationUri = $resourceModel->getValue($resourceUri, 'http://schema.org/affiliation');
+    if ($affiliationUri === null) {
+        $affiliation = '';
+    } else {
+        $affiliation = $this->link(
+            array(
+                'uri'    => $affiliationUri,
+                'direct' => 'true',
+                'prefix'   => '<h3 class="affiliation">',
+                'suffix'   => '</h3>'
+            )
+        );
+    }
+
+    // prepare the abstract
+    $content      = $this->literal(array(
+        'property' => 'site:content',
+        'tag'      => 'p',
+        'class'    => 'abstract')
+    );
+?>
+    <div about="<?php echo $this->curie($resourceUri) ?>" class="clearfix abstract <?php echo $logo ? 'abstract-with-logo': '' ?>">
+    <?php echo $logo ?>
+    <h2><a href="<?php echo $resourceUri ?>"><?php echo $title ?></a></h2>
+    <?php echo $affiliation, $content ?>
+    </div>
+<?php
+}
+
+if ( ($this->listhint == 'last') || ($this->rowcount == 1) ) {
+    echo "</div>" . PHP_EOL;
+}

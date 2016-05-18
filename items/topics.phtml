@@ -1,0 +1,40 @@
+
+<div style="width: 100%"><table style="font-size: 100%" cellspacing="10" width="100%">
+            <tr valign="top">
+                <td>
+                    
+                    <div id="exhibit-view-panel">
+                        <div ex:role="exhibit-lens" class="project">
+                            <b><span ex:content=".label" class="label"></span></b><br><br>
+                                <span ex:content=".description" class="description"></span><br><br>
+								<b>Domain:</b> <span ex:content=".domain"></span><br>
+								<div ex:if-exists=".requirements"> 
+								<b>Requirements:</b> <span ex:content=".requirements" class="requirements"></span><br>
+								</div>
+                                <b>Level:</b> <span ex:content=".level" class="level"></span><br>
+								<div ex:if-exists=".url"> 
+								<b>More Information:</b> <span ex:content=".url"></span><br>
+								</div>
+								<b>Contact:</b> <a ex:if-exists=".email" ex:href-content=".email" ><span ex:content=".contact"></span></a>
+                        </div>
+                       <div ex:role="exhibit-view"
+                            ex:viewClass="Exhibit.TileView"
+                            ex:orders=".label"
+                            ex:directions="ascending"
+                            ex:possibleOrders=".level, .contact"
+                            ex:showAll="true"
+                            ex:grouped="false">
+                        </div>
+                    </div>
+                </td>
+                <td width="25%">
+                   	<div ex:role="facet" ex:expression=".module" ex:sortMode="count" ex:facetLabel="Module"></div>
+					<div ex:role="facet" ex:expression=".domain" ex:sortMode="count" ex:facetLabel="Domain"></div>
+					<div ex:role="facet" ex:expression=".level" ex:sortMode="count" ex:facetLabel="Level"></div>
+                    <div ex:role="facet" ex:expression=".technologies" ex:sortMode="count" ex:facetLabel="Technologies"></div>
+					<div ex:role="facet" ex:expression=".contact" ex:sortMode="count" ex:facetLabel="Contact Person"></div>
+                </td>
+            </tr>
+        </table></div>
+</div>
+</div> 
