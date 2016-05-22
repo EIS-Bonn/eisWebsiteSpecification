@@ -120,7 +120,7 @@ href="https://spreadsheets.google.com/feeds/list/0AkWMg97xNy0udE5qM3l4Y2ZtZDVMVl
     // includes the exhibit header links
     $this->headScriptExhibit( array(
         array ('uri' => 'http://eis.iai.uni-bonn.de/schema/publicationTag',
-               'sprintf' => 'http://eis.iai.uni-bonn.de/eis.bib.json?callback=cb'),
+               'sprintf' => 'http://eis.iai.uni-bonn.de/bibfilter/BibFilter.php?suffix=%s&callback=cb'),
         array ('uri' => 'http://lod2.eu/schema/exhibitData')
     ));
     // other head scripts
