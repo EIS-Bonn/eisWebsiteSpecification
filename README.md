@@ -17,7 +17,7 @@ types -> templates
 To have a filter of publications in home page of each person, or project:
 
 Add the file BibFilter.php inside the root folder of website inside the folder /bibFilter
-and make sure
+and make sure that this folder is included and is not writable in .htaccess file
 
 This filter works by pubs tag inside bib file, if that does not match the publication Tag of the person/project,
 it will search inside authors and tries to match an author to the publication Tag.
